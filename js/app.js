@@ -4,7 +4,7 @@ onload = () => {
 };
 
 // Global variables
-let canvas, renderer, scene, camera, objects, cube, pyramid, angle, material;
+let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ;
 let objectsArray = [];
 
 /**
@@ -162,12 +162,15 @@ function onDocumentKeyDown(event) {
 /**
  * Renders the scene.
  */
+rotationX = getRndInteger( -20 , 20 ) / 100;
+rotationY = getRndInteger( -20 , 20 ) / 100;
+rotationZ = getRndInteger( -20 , 20 ) / 100;
 function render() {
     for (let i = 0; i < objects; i++) {
         // Apply rotation
-        objectsArray[i].rotation.x += 0.05
-        objectsArray[i].rotation.y += 0.05
-        objectsArray[i].rotation.z += 0.05
+        objectsArray[i].rotation.x += rotationX;
+        objectsArray[i].rotation.y += rotationY;
+        objectsArray[i].rotation.z += rotationZ;
     }
     // Draw the scene
     renderer.render(scene, camera);
