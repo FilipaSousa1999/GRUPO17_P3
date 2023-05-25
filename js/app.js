@@ -4,12 +4,45 @@ onload = () => {
 };
 
 // Global variables
-let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ;
+let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ, light;
 let objectsArray = [];
+let lightIntensity = 1.0;
+const colorLight = 0xffff00; // light color
+
+//light direction
+let sun_x = document.getElementById("pos_sun_x").value;
+let sun_y = document.getElementById("pos_sun_z").value;
+let sun_z = document.getElementById("pos_sun_y").value;
+let targ_x = document.getElementById("pos_targ_x").value;
+let targ_y = document.getElementById("pos_targ_y").value;
+let targ_z = document.getElementById("pos_targ_z").value;
 
 /**
  * Initializes the WebGL application
  */
+
+ document.getElementById("light_selector").onchange = function () {
+     scene.remove(light);
+     scene.remove(light.target);
+     let lightType = document.getElementById("light_selector").value;
+     makeLight(lightType);
+ }
+
+
+  document.getElementById("light_Intensity").onchange = function () {
+      lightIntensity = document.getElementById("light_Intensity").value;
+  }
+
+  function getInputValue() {
+          sun_x = document.getElementById("pos_sun_x").value;
+          sun_y = document.getElementById("pos_sun_z").value;
+          sun_z = document.getElementById("pos_sun_y").value;
+          targ_x = document.getElementById("pos_targ_x").value;
+          targ_y = document.getElementById("pos_targ_y").value;
+          targ_z = document.getElementById("pos_targ_z").value;
+          changelight();
+  }
+
 function init() {
 
     // *** Get canvas
@@ -47,6 +80,10 @@ function init() {
     const aspect = canvas.width / canvas.height;
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far); // mimics the way the human eye sees
     camera.position.z = 3;
+
+
+    // *** Create a light ***
+    makeLight("ambient");
 
     // *** Render
     render();
@@ -183,4 +220,29 @@ function render() {
  */
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+function makeLight(lightType) {
+        switch (lightType) {
+                case "ambient": // light that shoots light in all directions
+                    light = new THREE.AmbientLight(colorLight, lightIntensity);
+                    break;
+                case "directional": // often used to represent the sun, and will shine in the direction of its target
+                    light = new THREE.DirectionalLight(colorLight, lightIntensity);
+                    light.position.set(sun_x, sun_y, sun_z);
+                    light.target.position.set(targ_x, targ_y, targ_y);
+                    scene.add(light.target);
+                    break;
+                default:
+                    return -1;
+            }
+            scene.add(light);
+        }
+
+
+function changelight() {
+    if (lightType == "directional") {
+        light.position.set(sun_x, sun_y, sun_z);
+        light.target.position.set(targ_x, targ_y, targ_y);
+    }
 }
