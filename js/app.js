@@ -4,7 +4,7 @@ onload = () => {
 };
 
 // Global variables
-let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ, light;
+let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ, light, MousePosX, MousePosY,oldMousePosX,oldMousePosY, calcX, calcY;
 let objectsArray = [];
 let lightIntensity = 1.0;
 const colorLight = 0xffff00; // light color
@@ -27,6 +27,11 @@ let targ_z = document.getElementById("pos_targ_z").value;
      let lightType = document.getElementById("light_selector").value;
      makeLight(lightType);
  }
+
+
+
+
+
 
 
   document.getElementById("light_Intensity").onchange = function () {
@@ -195,6 +200,25 @@ function onDocumentKeyDown(event) {
         camera.position.x += xSpeed;
     }
 }
+
+
+let screenLog = document.querySelector("#screen-log");
+document.addEventListener("mousemove", exit_pos);
+
+function exit_pos(e) {
+     screenLog.innerText = `
+         Screen X/Y: ${e.screenX}, ${e.screenY}
+         Client X/Y: ${e.clientX}, ${e.clientY}`;
+     MousePosX = e.clientX;
+     MousePosY = e.clientY;
+     camera.rotation.y=-MousePosX/100;;
+     //camera.rotation.z=MousePosX/1000;
+     camera.rotation.x=-MousePosY/100;
+ }
+
+
+
+
 
 /**
  * Renders the scene.
