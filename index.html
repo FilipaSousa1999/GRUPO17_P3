@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+<meta charset="UTF-8">
 <head>
     <title>pa-fpv</title>
 </head>
@@ -7,43 +8,32 @@
 <canvas id="gl-canvas" width="800" height="600">
     Sorry, but your browser does not support HTML5's canvas element.
 </canvas>
+
 <br>
-Type of light:
+
+Tipo:
 <select id="light_selector">
     <option value="ambient">Ambient</option>
     <option value="directional">Directional</option>
 </select>
-<br>
-Intensity of light:
-<select id="light_Intensity">
-    <option value="1.0">1.0</option>
-    <option value="2.0">2.0</option>
-    <option value="3.0">3.0</option>
-    <option value="4.0">4.0</option>
-    <option value="5.0">5.0</option>
-</select>
-<br>
-<label>Number x of pos sun:</label>
-<input type="number" id="pos_sun_x" name="pos_sun_x"  value="10"  min="0" max="100">
-<br>
-<label>Number x of pos sun:</label>
-<input type="number" id="pos_sun_y" name="pos_sun_y" value="10"  min="0" max="100">
-<br>
-<label>Number x of pos sun:</label>
-<input type="number" id="pos_sun_z" name="pos_sun_z"  value="40"  min="0" max="100">
-<br>
-<label>Number x of pos targ:</label>
-<input type="number" id="pos_targ_x" name="pos_targ_x"  value="0" min="0" max="100">
-<br>
-<label>Number x of pos targ:</label>
-<input type="number" id="pos_targ_y" name="pos_targ_y"  value="0" min="0" max="100">
-<br>
-<label>Number x of pos targ:</label>
-<input type="number" id="pos_targ_z" name="pos_targ_z" value="0"  min="0" max="100">
-<br>
-<button type="button" onclick="getInputValue()">
-    Apply
-</button>
+
+<br><br>
+
+<label>Intensidade:</label>
+<input type="number" id="light_Intensity_r" name="light_Intensity_r"  placeholder="R">
+<input type="number" id="light_Intensity_g" name="light_Intensity_g"  placeholder="G">
+<input type="number" id="light_Intensity_b" name="light_Intensity_b"  placeholder="B">
+
+<br><br>
+
+<label>Direção:</label>
+<input type="number" id="pos_sun_x" name="pos_sun_x"  placeholder="X">
+<input type="number" id="pos_sun_y" name="pos_sun_y"  placeholder="Y">
+<input type="number" id="pos_sun_z" name="pos_sun_z"  placeholder="Z">
+
+<br><br>
+
+<button id="getInputValues">Adicionar Luz</button>
 
 <script src="js/three.js"></script>
 <script src="js/app.js"></script>

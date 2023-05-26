@@ -6,43 +6,10 @@ onload = () => {
 // Global variables
 let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ, light;
 let objectsArray = [];
-let lightIntensity = 1.0;
-const colorLight = 0xffff00; // light color
-
-//light direction
-let sun_x = document.getElementById("pos_sun_x").value;
-let sun_y = document.getElementById("pos_sun_z").value;
-let sun_z = document.getElementById("pos_sun_y").value;
-let targ_x = document.getElementById("pos_targ_x").value;
-let targ_y = document.getElementById("pos_targ_y").value;
-let targ_z = document.getElementById("pos_targ_z").value;
 
 /**
  * Initializes the WebGL application
  */
-
- document.getElementById("light_selector").onchange = function () {
-     scene.remove(light);
-     scene.remove(light.target);
-     let lightType = document.getElementById("light_selector").value;
-     makeLight(lightType);
- }
-
-
-  document.getElementById("light_Intensity").onchange = function () {
-      lightIntensity = document.getElementById("light_Intensity").value;
-  }
-
-  function getInputValue() {
-          sun_x = document.getElementById("pos_sun_x").value;
-          sun_y = document.getElementById("pos_sun_z").value;
-          sun_z = document.getElementById("pos_sun_y").value;
-          targ_x = document.getElementById("pos_targ_x").value;
-          targ_y = document.getElementById("pos_targ_y").value;
-          targ_z = document.getElementById("pos_targ_z").value;
-          changelight();
-  }
-
 function init() {
 
     // *** Get canvas
@@ -82,8 +49,8 @@ function init() {
     camera.position.z = 3;
 
 
-    // *** Create a light ***
-    makeLight("ambient");
+    // *** Create the event listeners for the buttons
+    document.getElementById("getInputValues").onclick = makeLight;
 
     // *** Render
     render();
@@ -120,11 +87,11 @@ function makeCube() {
 
     let texture = getRndInteger( 0 , 1 );
     if (texture === 0) {
-        material = new THREE.MeshBasicMaterial({vertexColors: true}); // represent the surface properties. Note: the basic material is *not* affected by lights
+        material = new THREE.MeshPhongMaterial({vertexColors: true, shininess: 35}); // represent the surface properties
     }
     else {
         const loader = new THREE.TextureLoader();
-        material = new THREE.MeshBasicMaterial({map: loader.load('texture.png')}); // represent the surface properties. Note: the basic material is *not* affected by lights
+        material = new THREE.MeshPhongMaterial({map: loader.load('texture.png'), shininess: 35}); // represent the surface properties
     }
 
     cube = new THREE.Mesh(geometry, material); // mesh objects represent drawing a specific Geometry with a specific Material
@@ -162,11 +129,11 @@ function makePyramid() {
 
     let texture = getRndInteger( 0 , 1 );
     if (texture === 0) {
-        material = new THREE.MeshBasicMaterial({vertexColors: true}); // represent the surface properties. Note: the basic material is *not* affected by lights
+        material = new THREE.MeshPhongMaterial({vertexColors: true, shininess: 35}); // represent the surface properties
     }
     else {
         const loader = new THREE.TextureLoader();
-        material = new THREE.MeshBasicMaterial({map: loader.load('texture.png')}); // represent the surface properties. Note: the basic material is *not* affected by lights
+        material = new THREE.MeshPhongMaterial({map: loader.load('texture.png'), shininess: 35}); // represent the surface properties
     }
 
     pyramid = new THREE.Mesh(geometry, material); // mesh objects represent drawing a specific Geometry with a specific Material
@@ -199,9 +166,9 @@ function onDocumentKeyDown(event) {
 /**
  * Renders the scene.
  */
-rotationX = getRndInteger( -20 , 20 ) / 100;
-rotationY = getRndInteger( -20 , 20 ) / 100;
-rotationZ = getRndInteger( -20 , 20 ) / 100;
+rotationX = getRndInteger( -10 , 10 ) / 100;
+rotationY = getRndInteger( -10 , 10 ) / 100;
+rotationZ = getRndInteger( -10 , 10 ) / 100;
 function render() {
     for (let i = 0; i < objects; i++) {
         // Apply rotation
@@ -222,27 +189,32 @@ function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-function makeLight(lightType) {
-        switch (lightType) {
-                case "ambient": // light that shoots light in all directions
-                    light = new THREE.AmbientLight(colorLight, lightIntensity);
-                    break;
-                case "directional": // often used to represent the sun, and will shine in the direction of its target
-                    light = new THREE.DirectionalLight(colorLight, lightIntensity);
-                    light.position.set(sun_x, sun_y, sun_z);
-                    light.target.position.set(targ_x, targ_y, targ_y);
-                    scene.add(light.target);
-                    break;
-                default:
-                    return -1;
-            }
-            scene.add(light);
-        }
+function makeLight() {
+    scene.remove(light);
+    let lightType = document.getElementById("light_selector").value;
+    let lightIntensityR = document.getElementById("light_Intensity_r").value;
+    let lightIntensityG = document.getElementById("light_Intensity_g").value;
+    let lightIntensityB = document.getElementById("light_Intensity_b").value;
+    let sun_x = document.getElementById("pos_sun_x").value;
+    let sun_y = document.getElementById("pos_sun_y").value;
+    let sun_z = document.getElementById("pos_sun_z").value;
 
+    // If the ambient light has all the fields field
+    let ambient = lightType==="ambient" && lightIntensityR && lightIntensityG && lightIntensityB;
 
-function changelight() {
-    if (lightType == "directional") {
-        light.position.set(sun_x, sun_y, sun_z);
-        light.target.position.set(targ_x, targ_y, targ_y);
+    // If the directional light has all the fields field
+    let directional = lightType==="directional" && lightIntensityR && lightIntensityG && lightIntensityB && sun_x && sun_y && sun_z;
+
+    let color = new THREE.Color("rgb(" + lightIntensityR + "," + lightIntensityG + "," + lightIntensityB + ")");
+
+    if (ambient) {
+        light = new THREE.AmbientLight(color);
     }
+
+    else if (directional) {
+                    light = new THREE.DirectionalLight(color);
+                    light.position.set(sun_x, sun_y, sun_z);
+    }
+
+    scene.add(light);
 }
