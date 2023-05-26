@@ -4,7 +4,7 @@ onload = () => {
 };
 
 // Global variables
-let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ, light;
+let canvas, renderer, scene, camera, objects, cube, pyramid, material, rotationX, rotationY, rotationZ, light, MousePosX, MousePosY;
 let objectsArray = [];
 
 /**
@@ -47,7 +47,6 @@ function init() {
     const aspect = canvas.width / canvas.height;
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far); // mimics the way the human eye sees
     camera.position.z = 3;
-
 
     // *** Create the event listeners for the buttons
     document.getElementById("getInputValues").onclick = makeLight;
@@ -161,6 +160,21 @@ function onDocumentKeyDown(event) {
     } else if (keyCode == 68) {
         camera.position.x += xSpeed;
     }
+}
+
+/**
+ * mouse movement
+ */
+let screenLog = document.querySelector("#screen-log");
+document.addEventListener("mousemove", onMouseMove);
+function onMouseMove(e) {
+    screenLog.innerText = `
+         Screen X/Y: ${e.screenX}, ${e.screenY}
+         Client X/Y: ${e.clientX}, ${e.clientY}`;
+    MousePosX = e.clientX;
+    MousePosY = e.clientY;
+    camera.rotation.y = -MousePosX / 1000;
+    camera.rotation.x = -MousePosY / 1000;
 }
 
 /**
